@@ -10,7 +10,8 @@ This is a simple chat analytics for whatsapp group.
 ```php
 require 'phpchat/Analytics.php';
 
-$is_initial = 0;            // Set 0 if you want to insert data into database
-$data = new Analytics('data/data1.txt', $is_initial);
+$is_initial = 0;                    // Set 0 if you want to insert data into database
+$filename = 'path/name.txt';        // Include path to file
+$data = new Analytics($filename, $is_initial);
 
 ```
