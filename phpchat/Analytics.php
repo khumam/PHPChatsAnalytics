@@ -7,14 +7,12 @@ class Analytics
     protected $filename;
     protected $data = [];
     protected $database;
-    protected $initial;
     protected $totalData = 0;
 
-    public function __construct($filename, $initial = 0)
+    public function __construct($filename)
     {
         $this->filename = $filename;
         $this->_extractData();
-        $this->initial = $initial;
     }
 
     private function _extractData()
@@ -46,9 +44,6 @@ class Analytics
         fclose($data);
         $connection = new Database();
         $this->database = $connection->getDatabase();
-        if ($this->initial === 0) {
-            $this->_insertData();
-        }
     }
 
     public function getData($type, $max = null)
@@ -65,9 +60,22 @@ class Analytics
         }
     }
 
-    private function _insertData()
+    public function insertData()
     {
         $lists = $this->data;
+
+        $filename = $this->database->prepare("SELECT id FROM filename WHERE filename = '$this->filename'");
+        $filename->execute();
+        $checkFileName = $filename->fetchAll();
+
+        if (!empty($checkFileName)) {
+            $filename_id = $checkFileName['id'];
+        } else {
+            $insertFileData = $this->database->prepare("INSERT INTO filename (`filename`) VALUES ('$this->filename')");
+            $insertFileData->execute();
+            $filename_id = $this->database->lastInsertId();
+        }
+
         for ($index = 0; $index < $this->totalData; $index++) {
             $date = $lists['date'][$index];
             $datetime = date('Y-m-d', strtotime("$date"));
@@ -77,7 +85,7 @@ class Analytics
             $links = $this->_countLinks($message);
             $letter_count = strlen($message);
             $word_count = str_word_count($message);
-            $insertData = $this->database->exec("INSERT INTO datachat (date, time, contact, message, emoji, url, letter_count, word_count) VALUES ('$datetime', '$time', '$contact', '$message', 0, $links, $letter_count, $word_count)");
+            $insertData = $this->database->exec("INSERT INTO datachat (filename_id, date, time, contact, message, emoji, url, letter_count, word_count) VALUES ($filename_id, '$datetime', '$time', '$contact', '$message', 0, $links, $letter_count, $word_count)");
         }
     }
 
