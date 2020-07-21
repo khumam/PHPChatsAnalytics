@@ -34,8 +34,9 @@ class Analytics
                         $datetime = explode(', ', $timestamp);
                         $this->data['date'][] = $datetime[0];
                         $this->data['time'][] = $datetime[1] . 'M';
-                        $this->data['message'][] = trim(substr($text, strpos($text, ': ') + 1));
-                        $this->data['contact'][] = trim(substr(trim(substr($text, 0, strpos($text, ': '))), strpos(trim(substr($text, 0, strpos($text, ': '))), ' - ') + 2));
+                        $this->data['message'][] = str_replace('"', "", trim(substr($text, strpos($text, ': ') + 1)));
+                        $this->data['contact'][] = str_replace("'", "", trim(substr(trim(substr($text, 0, strpos($text, ': '))), strpos(trim(substr($text, 0, strpos($text, ': '))), ' - ') + 2)));
+                        $this->data['emoji'][] = $this->_getEmoji(trim(substr($text, strpos($text, ': ') + 1)));
                         $this->totalData += 1;
                     }
                 }
@@ -82,10 +83,11 @@ class Analytics
             $time = $lists['time'][$index];
             $message = str_replace("'", '', $lists['message'][$index]);
             $contact = $lists['contact'][$index];
+            $emoji = $lists['emoji'][$index];
             $links = $this->_countLinks($message);
             $letter_count = strlen($message);
             $word_count = str_word_count($message);
-            $insertData = $this->database->exec("INSERT INTO datachat (filename_id, date, time, contact, message, emoji, url, letter_count, word_count) VALUES ($filename_id, '$datetime', '$time', '$contact', '$message', 0, $links, $letter_count, $word_count)");
+            $insertData = $this->database->exec("INSERT INTO datachat (filename_id, date, time, contact, message, emoji, url, letter_count, word_count) VALUES ($filename_id, '$datetime', '$time', '$contact', '$message', '$emoji', $links, $letter_count, $word_count)");
         }
     }
 
@@ -97,5 +99,12 @@ class Analytics
         } else {
             return 0;
         }
+    }
+
+    private function _getEmoji($string)
+    {
+        preg_match_all('/([0-9#][\x{20E3}])|[\x{00ae}\x{00a9}\x{203C}\x{2047}\x{2048}\x{2049}\x{3030}\x{303D}\x{2139}\x{2122}\x{3297}\x{3299}][\x{FE00}-\x{FEFF}]?|[\x{2190}-\x{21FF}][\x{FE00}-\x{FEFF}]?|[\x{2300}-\x{23FF}][\x{FE00}-\x{FEFF}]?|[\x{2460}-\x{24FF}][\x{FE00}-\x{FEFF}]?|[\x{25A0}-\x{25FF}][\x{FE00}-\x{FEFF}]?|[\x{2600}-\x{27BF}][\x{FE00}-\x{FEFF}]?|[\x{2900}-\x{297F}][\x{FE00}-\x{FEFF}]?|[\x{2B00}-\x{2BF0}][\x{FE00}-\x{FEFF}]?|[\x{1F000}-\x{1F6FF}][\x{FE00}-\x{FEFF}]?/u', $string, $emojis);
+
+        return json_encode($emojis);
     }
 }
