@@ -88,4 +88,13 @@ class Data
     {
         return sprintf('#%06X', mt_rand(0, 0xFFFFFF));
     }
+
+    public function getAllMessage()
+    {
+        $mostActive = $this->pdo->prepare("SELECT CONCAT(message, ' ') FROM `datachat` WHERE `message` != '<Media omitted>'");
+        $mostActive->execute();
+        $data = $mostActive->fetchAll();
+
+        return $data;
+    }
 }

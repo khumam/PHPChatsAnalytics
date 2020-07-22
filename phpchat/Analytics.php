@@ -107,4 +107,12 @@ class Analytics
 
         return json_encode($emojis);
     }
+
+    public function getStats()
+    {
+        $result = "Total chat: " . count($this->data['message']) . "\n";
+        $result .= "Total member: " . count(array_count_values($this->data['contact'])) . "\n";
+        $result .= "Total Media: " . array_count_values($this->data['message'])["<Media omitted>"] . "\n";
+        echo $result;
+    }
 }
