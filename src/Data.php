@@ -1,17 +1,39 @@
 <?php
 
+/**
+ * Data configuration
+ * 
+ * @author  Khoerul Umam <id.khoerulumam@gmail.com>
+ * @version $Revision: 1 $
+ * @access  public
+ * 
+ */
+
 require  'Database.php';
 
 class Data
 {
+    /**
+     * PDO configuration
+     */
     protected $pdo;
 
+    /**
+     * Init apps
+     */
     public function __construct()
     {
         $database = new Database();
         $this->pdo = $database->getDatabase();
     }
 
+    /**
+     * Decode emoji
+     * 
+     * @param string $src Encoded emoji
+     * 
+     * @return string
+     */
     private function _decodeEmoticons($src)
     {
         $replaced = preg_replace("/\\\\u([0-9A-F]{1,4})/i", "&#x$1;", $src);
@@ -20,6 +42,11 @@ class Data
         return $result;
     }
 
+    /**
+     * Get emoji used in chat
+     * 
+     * @return string
+     */
     public function getMostEmojiUsed()
     {
         $emojis = [];
@@ -55,6 +82,13 @@ class Data
         return $result;
     }
 
+    /**
+     * Get statistic data
+     * 
+     * @param string $parameter Parameter used in data
+     * 
+     * @return string
+     */
     public function getMost($parameter)
     {
         $labels = [];
@@ -84,11 +118,21 @@ class Data
         return $result;
     }
 
+    /**
+     * Generate random color for graph
+     * 
+     * @return string
+     */
     private function _rand_color()
     {
         return sprintf('#%06X', mt_rand(0, 0xFFFFFF));
     }
 
+    /**
+     * Get all message
+     * 
+     * @return array
+     */
     public function getAllMessage()
     {
         $mostActive = $this->pdo->prepare("SELECT CONCAT(message, ' ') FROM `datachat` WHERE `message` != '<Media omitted>'");

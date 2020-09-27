@@ -1,20 +1,56 @@
 <?php
 
+/**
+ * Analytic whatsapp chat
+ * 
+ * @author  Khoerul Umam <id.khoerulumam@gmail.com>
+ * @version $Revision: 1 $
+ * @access  public
+ * 
+ */
+
+namespace khumam\chatanalytics;
+
 require 'Database.php';
 
 class Analytics
 {
+    /**
+     * Save file name
+     */
     protected $filename;
+
+    /**
+     * Save data
+     */
     protected $data = [];
+
+    /**
+     * Database configuration
+     */
     protected $database;
+
+    /**
+     * Total chat data
+     */
     protected $totalData = 0;
 
+    /**
+     * Init apps
+     * 
+     * @param string $filename File name
+     */
     public function __construct($filename)
     {
         $this->filename = $filename;
         $this->_extractData();
     }
 
+    /**
+     * Extract data from filename
+     * 
+     * @return array
+     */
     private function _extractData()
     {
         $filename = $this->filename;
@@ -47,6 +83,14 @@ class Analytics
         $this->database = $connection->getDatabase();
     }
 
+    /**
+     * Get data
+     * 
+     * @param string  $type Data type
+     * @param integer $max  Maximum data
+     * 
+     * @return string
+     */
     public function getData($type, $max = null)
     {
         $data = $this->data;
@@ -61,6 +105,11 @@ class Analytics
         }
     }
 
+    /**
+     * Insert data to database
+     * 
+     * @return boolean
+     */
     public function insertData()
     {
         $lists = $this->data;
@@ -91,6 +140,13 @@ class Analytics
         }
     }
 
+    /**
+     * Count link in chat data
+     * 
+     * @param string $string Chat text
+     * 
+     * @return integer
+     */
     private function _countLinks($string)
     {
         $pattern = '~[a-z]+://\S+~';
@@ -101,6 +157,13 @@ class Analytics
         }
     }
 
+    /**
+     * Get emoji data
+     * 
+     * @param string $string Chat text
+     * 
+     * @return json
+     */
     private function _getEmoji($string)
     {
         preg_match_all('/([0-9#][\x{20E3}])|[\x{00ae}\x{00a9}\x{203C}\x{2047}\x{2048}\x{2049}\x{3030}\x{303D}\x{2139}\x{2122}\x{3297}\x{3299}][\x{FE00}-\x{FEFF}]?|[\x{2190}-\x{21FF}][\x{FE00}-\x{FEFF}]?|[\x{2300}-\x{23FF}][\x{FE00}-\x{FEFF}]?|[\x{2460}-\x{24FF}][\x{FE00}-\x{FEFF}]?|[\x{25A0}-\x{25FF}][\x{FE00}-\x{FEFF}]?|[\x{2600}-\x{27BF}][\x{FE00}-\x{FEFF}]?|[\x{2900}-\x{297F}][\x{FE00}-\x{FEFF}]?|[\x{2B00}-\x{2BF0}][\x{FE00}-\x{FEFF}]?|[\x{1F000}-\x{1F6FF}][\x{FE00}-\x{FEFF}]?/u', $string, $emojis);
@@ -108,6 +171,11 @@ class Analytics
         return json_encode($emojis);
     }
 
+    /**
+     * Get statistic
+     * 
+     * @return string
+     */
     public function getStats()
     {
         $result = "Total chat: " . count($this->data['message']) . "\n";

@@ -1,0 +1,17 @@
+{
+    "name": "khumam/php-chats-analytics",
+    "description": "Simple Whatsapp chat analytics which can be used to view chat statistics.",
+    "type": "library",
+    "license": "MIT",
+    "authors": [{
+        "name": "Khoerul Umam",
+        "email": "id.khoerulumam@gmail.com"
+    }],
+    "minimum-stability": "dev",
+    "autoload": {
+        "psr-4": {
+            "khumam\\chatanalytics\\": "src/"
+        }
+    },
+    "require": {}
+}

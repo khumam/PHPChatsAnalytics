@@ -1,15 +1,49 @@
 <?php
 
+/**
+ * Database configuration
+ * 
+ * @author  Khoerul Umam <id.khoerulumam@gmail.com>
+ * @version $Revision: 1 $
+ * @access  public
+ * 
+ */
+
 class Database
 {
+    /**
+     * DB Host configuration
+     */
     protected $dbhost = '127.0.0.1';
+
+    /**
+     * DB Name configuration
+     */
     protected $dbname = 'phpchats';
+
+    /**
+     * DB user configuration
+     */
     protected $dbuser = 'root';
+
+    /**
+     * DB password configuration
+     */
     protected $dbpass = '';
+
+    /**
+     * Database
+     */
     protected $database;
 
+    /**
+     * Saved data
+     */
     protected $data = [];
 
+    /**
+     * Init apps
+     */
     public function __construct()
     {
         $dbhost = $this->dbhost;
@@ -19,6 +53,11 @@ class Database
         $this->_setDatabase();
     }
 
+    /**
+     * Set database
+     * 
+     * @return boolean
+     */
     private function _setDatabase()
     {
         try {
@@ -43,6 +82,11 @@ class Database
         }
     }
 
+    /**
+     * Get database object
+     * 
+     * @return object
+     */
     public function getDatabase()
     {
         return $this->database;
